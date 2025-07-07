@@ -1,5 +1,6 @@
 package dev.srivatsan.spring_boot_kafka.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class ProducerService {
 
@@ -23,13 +25,15 @@ public class ProducerService {
     @Async
     public void sendMessageInfinitely() throws InterruptedException {
         while (true){
-            sendMessage();
+            String message = "Hello World - " + LocalDateTime.now();
+            sendMessage(message);
             TimeUnit.SECONDS.sleep(2);
         }
     }
 
-    public void sendMessage() {
-        kafkaTemplate.send(topic, "Hello World - " + LocalDateTime.now());
+    public void sendMessage(String message) {
+        log.info("Producer Sending message: {}", message);
+        kafkaTemplate.send(topic, message);
     }
 
 }
