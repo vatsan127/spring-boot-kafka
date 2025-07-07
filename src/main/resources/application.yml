@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: spring-boot-kafka
+
+  task: # Async Config
+    execution:
+      thread-name-prefix: "KafkaProducerThread-"
+      pool:
+        core-size: 1
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      topic: test
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: 0  # Acknowledgment level (0, 1, all/-1)
+      retries: 3
+      batch-size: 16384  # Batch size in bytes
+      properties:
+        linger.ms: 5
+        delivery.timeout.ms: 300000
+    consumer:
+      topic: test
+      group-id: my-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      auto-offset-reset: earliest   # Auto offset reset (earliest, latest, none)
+#      enable-auto-commit: false   # Enable auto commit
+#      fetch-min-size: 1   # Fetch minimum bytes
+#      heartbeat-interval: 3000    # Heartbeat interval
+      properties:
+        session.timeout.ms: 30000
+        max.poll.records: 500
+        max.poll.interval.ms: 300000
+#    listener:   # Listener configuration
+#      ack-mode: manual_immediate    # Acknowledgment mode (batch, record, manual, manual_immediate)
+#      concurrency: 3    # Concurrency level
+#      poll-timeout: 3000    # Poll timeout
+#      missing-topics-fatal: false   # Missing topics fatal
+
+# Logging configuration for Kafka
+logging:
+  level:
+    org.apache.kafka: INFO
+    org.springframework.kafka: DEBUG
