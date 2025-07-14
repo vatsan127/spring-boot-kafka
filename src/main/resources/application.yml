@@ -2,37 +2,34 @@ spring:
   application:
     name: spring-boot-kafka
 
-  task: # Async Config
-    execution:
-      thread-name-prefix: "KafkaProducerThread-"
-      pool:
-        core-size: 1
-
   kafka:
     bootstrap-servers: localhost:9092
+    topic: avro-test-1
+    properties:
+      schema.registry.url: http://localhost:8081
+      allow.auto.create.topics: true
 
     producer:
-      topic: test
+      topic: ${spring.kafka.topic}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       acks: 0  # Acknowledgment level (0, 1, all/-1)
       retries: 3
       batch-size: 16384  # Batch size in bytes
       properties:
         linger.ms: 5
         delivery.timeout.ms: 300000
-        allow.auto.create.topics: false
 
     consumer:
-      topic: test
+      topic: ${spring.kafka.topic}
       group-id: my-consumer-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
         session.timeout.ms: 30000
         max.poll.records: 500
         max.poll.interval.ms: 300000
-        allow.auto.create.topics: false
+        specific.avro.reader: true
 
     listener:   # Listener configuration
-      concurrency: 3    # Concurrency level
+      concurrency: 1   # Concurrency level
