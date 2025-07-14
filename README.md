@@ -1,2 +1,2 @@
-## Kafka AVro Implementation is present in
+## Kafka AVro Implementation
 >> feature/kafka-avro
